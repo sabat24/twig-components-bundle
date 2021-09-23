@@ -15,10 +15,10 @@ class Configuration implements ConfigurationInterface
     /**
      * @return TreeBuilder
      */
-    public function getConfigTreeBuilder()
+    public function getConfigTreeBuilder(): TreeBuilder
     {
-        $treeBuilder = new TreeBuilder();
-        $rootNode = $treeBuilder->root('twig_components');
+        $treeBuilder = new TreeBuilder('twig_components');
+        $rootNode = $treeBuilder->getRootNode();
 
         $rootNode
             ->children()
