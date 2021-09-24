@@ -18,17 +18,14 @@ interface TwigComponentInterface
      * Returns the parameters to be used when rendering the template.
      * Props can be provided when rendering the component to make it more dynamic.
      *
-     * @param array $props
-     * @return array
      */
-    public function getParameters(array $props = []);
+    public function getParameters(array $props = []): array;
 
     /**
      *  Returns a string to use as a name for the component.
      *
-     * @return String
      */
-    public function getName();
+    public function getName(): string;
 
     /**
      * Configures the props using the Symfony OptionResolver
@@ -41,7 +38,6 @@ interface TwigComponentInterface
     /**
      * Validates the slot content
      *
-     * @param SlotsResolver $resolver
      * @return mixed
      */
     public function configureSlots(SlotsResolver $resolver);
@@ -49,101 +45,83 @@ interface TwigComponentInterface
     /**
      * Returns the template file name for the component.
      *
-     * @return string;
      */
-    public function getTemplateName();
+    public function getTemplateName(): string;
 
     /**
      * Returns the entire path of the component template location.
      *
-     * @return string
      */
-    public function getTemplatePath();
+    public function getTemplatePath(): string;
 
     /**
      * Returns the directory the template file is located in
      *
-     * @return string
      */
-    public function getTemplateDirectory();
+    public function getTemplateDirectory(): string;
 
     /**
      * Returns the base response to use when rendering the component via the render() method.
      *
-     * @return Response
      */
-    public function getRenderResponse();
+    public function getRenderResponse(): Response;
 
     /**
      * Returns the directory name that holds the component.
      *
-     * @return string
      *
      */
-    public function getComponentsRoot();
+    public function getComponentsRoot(): string;
 
     /**
      * Sets the directory name that holds the component.
      *
-     * @param string $componentsRoot
-     *
-     * @return string
      */
-    public function setComponentsRoot($componentsRoot);
+    public function setComponentsRoot(string $componentsRoot);
 
     /**
      * Returns the props passed to the component
      *
-     * @return array
      */
-    public function getProps();
+    public function getProps(): array;
 
     /**
      * Sets the props passed to the component
      *
-     * @param $props
      */
-    public function setProps($props);
+    public function setProps(array $props);
 
     /**
      * Injects the renderer into the component for rendering.
      *
-     * @param ComponentRenderer $componentRenderer
-     * @return void
      */
-    public function setRenderer(ComponentRenderer $componentRenderer);
+    public function setRenderer(ComponentRenderer $componentRenderer): void;
 
     /**
      * Returns a response holding the html of a component.
      *
-     * @param array $props
-     * @return string
      */
-    public function render(array $props = []);
+    public function render(array $props = []): Response;
 
     /**
      * Returns the rendered html of the component.
      *
-     * @param array $props
-     * @return string
      */
-    public function renderComponent(array $props = []);
+    public function renderComponent(array $props = []): string;
 
     /**
      * Returns an array containing references to the desired mixins.
      *
-     * @return array
      */
-    public function importMixins();
+    public function importMixins(): array;
 
 
     /**
-     * Whether or not the props should automatically be injected into the parameters.
+     * Whether the props should automatically be injected into the parameters.
      * The injecting of a prop only happens if it doesn't already exist in the parameters.
      *
-     * @return bool
      */
-    public function appendsProps();
+    public function appendsProps(): bool;
 
     /**
      * Returns the Twig Template in string form instead of a file.

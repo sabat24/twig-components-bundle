@@ -110,14 +110,11 @@ class ComponentRenderer
     /**
      * Returns a response holding the html of a component.
      *
-     * @param $name
-     * @param array $props
-     * @return Response
      * @throws ComponentNotFoundException
      * @throws TemplateNotFoundException
      * @throws \Throwable
      */
-    public function render($name, array $props = []): Response
+    public function render(string $name, array $props = []): Response
     {
         $component = $this->getComponent($name, $props);
 
@@ -142,7 +139,7 @@ class ComponentRenderer
     /**
      * @throws ComponentNotFoundException
      */
-    public function getComponent($name, array &$props = []): ?TwigComponentInterface
+    public function getComponent(string $name, array &$props = []): ?TwigComponentInterface
     {
         $component = $this->store->get($name);
 

@@ -17,29 +17,18 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 class TwigComponent implements TwigComponentInterface
 {
 
-    /**
-     * @var string
-     */
-    private $componentsRoot;
+    private string $componentsRoot;
 
-    /**
-     * @var array
-     */
-    private $props;
+    private array $props;
 
-    /**
-     * @var ComponentRenderer
-     */
-    private $renderer;
+    private ComponentRenderer $renderer;
 
     /**
      * Returns the parameters to be used when rendering the template.
      * Props can be provided when rendering the component to make it more dynamic.
      *
-     * @param array $props
-     * @return array
      */
-    public function getParameters(array $props = [])
+    public function getParameters(array $props = []): array
     {
         return $props;
     }
@@ -47,9 +36,8 @@ class TwigComponent implements TwigComponentInterface
     /**
      *  Returns a string to use as a name for the component.
      *
-     * @return String
      */
-    public function getName()
+    public function getName(): string
     {
         $className = get_class($this);
         $forwardSlashed = str_replace('\\', '/', $className);
@@ -66,9 +54,8 @@ class TwigComponent implements TwigComponentInterface
     /**
      * Returns the template file name for the component.
      *
-     * @return string
      */
-    public function getTemplateName()
+    public function getTemplateName(): string
     {
         return $this->getName() . ".html.twig";
     }
@@ -76,9 +63,8 @@ class TwigComponent implements TwigComponentInterface
     /**
      * Returns the entire path of the component template location.
      *
-     * @return string
      */
-    public function getTemplatePath()
+    public function getTemplatePath(): string
     {
         return $this->getTemplateDirectory() . '/' . $this->getTemplateName();
     }
@@ -86,9 +72,8 @@ class TwigComponent implements TwigComponentInterface
     /**
      * Returns the directory the template file is located in
      *
-     * @return string
      */
-    public function getTemplateDirectory()
+    public function getTemplateDirectory(): string
     {
         return $this->getComponentsRoot();
     }
@@ -96,9 +81,8 @@ class TwigComponent implements TwigComponentInterface
     /**
      * Returns the base response to use when rendering the component via the render() method.
      *
-     * @return Response
      */
-    public function getRenderResponse()
+    public function getRenderResponse(): Response
     {
         return new Response();
     }
@@ -106,10 +90,9 @@ class TwigComponent implements TwigComponentInterface
     /**
      * Returns the directory name that holds the component.
      *
-     * @return string
      *
      */
-    public function getComponentsRoot()
+    public function getComponentsRoot(): string
     {
         return $this->componentsRoot;
     }
@@ -117,11 +100,8 @@ class TwigComponent implements TwigComponentInterface
     /**
      * Sets the directory name that holds the component.
      *
-     * @param string $componentsRoot
-     *
-     * @return string
      */
-    public function setComponentsRoot($componentsRoot)
+    public function setComponentsRoot(string $componentsRoot)
     {
         $this->componentsRoot = $componentsRoot;
     }
@@ -129,9 +109,8 @@ class TwigComponent implements TwigComponentInterface
     /**
      * Returns the props passed to the component
      *
-     * @return array
      */
-    public function getProps()
+    public function getProps(): array
     {
         return $this->props;
     }
@@ -139,9 +118,8 @@ class TwigComponent implements TwigComponentInterface
     /**
      * Sets the props passed to the component
      *
-     * @param $props
      */
-    public function setProps($props)
+    public function setProps(array $props): void
     {
         $this->props = $props;
     }
@@ -149,8 +127,7 @@ class TwigComponent implements TwigComponentInterface
     /**
      * Configures the props using the Symfony OptionResolver
      *
-     * @param OptionsResolver $resolver
-     * @return void|bool
+     * @return void|false
      */
     public function configureProps(OptionsResolver $resolver)
     {
@@ -165,10 +142,8 @@ class TwigComponent implements TwigComponentInterface
     /**
      * Injects the renderer into the component for rendering.
      *
-     * @param ComponentRenderer $componentRenderer
-     * @return void
      */
-    public function setRenderer(ComponentRenderer $componentRenderer)
+    public function setRenderer(ComponentRenderer $componentRenderer): void
     {
         $this->renderer = $componentRenderer;
     }
@@ -176,33 +151,22 @@ class TwigComponent implements TwigComponentInterface
     /**
      * Returns the rendered html of the component.
      *
-     * @param array $props
-     * @return String
      * @throws ComponentNotFoundException
-     * @throws MixinNotFoundException
      * @throws TemplateNotFoundException
-     * @throws \Twig_Error_Loader
-     * @throws \Twig_Error_Runtime
-     * @throws \Twig_Error_Syntax
+     * @throws \Throwable
      */
-    public function renderComponent(array $props = [])
+    public function renderComponent(array $props = []): string
     {
         return $this->renderer->renderComponent($this->getName(), $props);
     }
 
     /**
      * Returns a response holding the html of the component.
-     *
-     * @param array $props
-     * @return Response
      * @throws ComponentNotFoundException
-     * @throws MixinNotFoundException
      * @throws TemplateNotFoundException
-     * @throws \Twig_Error_Loader
-     * @throws \Twig_Error_Runtime
-     * @throws \Twig_Error_Syntax
+     * @throws \Throwable
      */
-    public function render(array $props = [])
+    public function render(array $props = []): Response
     {
         return $this->renderer->render($this->getName(), $props);
     }
@@ -212,18 +176,17 @@ class TwigComponent implements TwigComponentInterface
      *
      * @return array
      */
-    public function importMixins()
+    public function importMixins(): array
     {
         return [];
     }
 
     /**
-     * Whether or not the props should automatically be injected into the parameters.
+     * Whether the props should automatically be injected into the parameters.
      * The injecting of a prop only happens if it doesn't already exist in the parameters.
      *
-     * @return bool
      */
-    public function appendsProps()
+    public function appendsProps(): bool
     {
         return true;
     }

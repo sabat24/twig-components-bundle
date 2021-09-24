@@ -14,32 +14,26 @@ class TwigComponentMixin
 {
 
     /**
-     * @return array
-     *
      * Merges with the parameters.
      */
-    public function getParameters(array $props = [])
+    public function getParameters(array $props = []): array
     {
         return [];
     }
 
     /**
-     * @return array
-     *
      * Merges with the props.
      */
-    public function getProps()
+    public function getProps(): array
     {
         return [];
     }
 
     /**
-     * @return int
-     *
      * The execution order of all the mixins. Mixins with the same key override the earlier ones.
      * Lower goes first.
      */
-    public function getPriority()
+    public function getPriority(): int
     {
         return 0;
     }
