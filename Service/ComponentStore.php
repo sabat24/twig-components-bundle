@@ -8,6 +8,7 @@ use Olveneer\TwigComponentsBundle\Exception\MixinNotFoundException;
 
 /**
  * Class ComponentStore
+ *
  * @package App\Olveneer\TwigComponentsBundle\Service
  */
 class ComponentStore
@@ -15,17 +16,17 @@ class ComponentStore
     /**
      * @var TwigComponentInterface[]
      */
-    private $components = [];
+    private array $components = [];
 
     /**
      * @var TwigComponentMixin[]
      */
-    private $imports = [];
+    private array $imports = [];
 
     /**
      * @var TwigComponentMixin[]
      */
-    private $mixins = [];
+    private array $mixins = [];
 
     /**
      * @param $mixin
@@ -38,15 +39,14 @@ class ComponentStore
     /**
      * Adds a component to the store
      *
-     * @param TwigComponentInterface|null $component
      * @throws MixinNotFoundException
      */
-    public function add($component)
+    public function add(?TwigComponentInterface $component)
     {
         if (!$component instanceof TwigComponentInterface) {
             return;
         }
-        /** @var string $imports */
+
         $importReferences = $component->importMixins();
 
         /** @var TwigComponentMixin[] $imports */
@@ -75,11 +75,7 @@ class ComponentStore
         $this->components[$component->getName()] = $component;
     }
 
-    /**
-     * @param $componentName
-     * @return TwigComponentMixin
-     */
-    public function getImports($componentName)
+    public function getImports($componentName): ?TwigComponentMixin
     {
         if (!$this->has($componentName)) {
             return null;
@@ -90,14 +86,11 @@ class ComponentStore
 
     /**
      * Returns a component by name or class name.
-     *
-     * @param $name
-     * @return TwigComponentInterface|null
      */
-    public function get($name)
+    public function get($name): ?TwigComponentInterface
     {
         if (class_exists($name)) {
-            foreach($this->components as $component) {
+            foreach ($this->components as $component) {
                 if (get_class($component) === $name) {
                     return $component;
                 }
@@ -113,21 +106,16 @@ class ComponentStore
 
     /**
      * Checks if the name is registered as a component
-     *
-     * @param $name
-     * @return bool
      */
-    public function has($name)
+    public function has($name): bool
     {
         return isset($this->components[$name]);
     }
 
     /**
      * Returns a list containing the names of all the registered components.
-     *
-     * @return array
      */
-    public function getRegisteredNames()
+    public function getRegisteredNames(): array
     {
         return array_keys($this->components);
     }

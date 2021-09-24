@@ -12,40 +12,27 @@ use Olveneer\TwigComponentsBundle\Exception\MixinNotFoundException;
 use Olveneer\TwigComponentsBundle\Exception\TemplateNotFoundException;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Twig\Environment;
 
 /**
  * Class ComponentRenderer
+ *
  * @package Olveneer\TwigComponentsBundle\Service
  */
 class ComponentRenderer
 {
-    /**
-     * @var ComponentStore
-     */
-    private $store;
+    private ComponentStore $store;
 
-    /**
-     * @var \Twig_Environment
-     */
-    private $environment;
+    private Environment $environment;
 
-    /**
-     * @var string
-     */
-    public $componentDirectory;
+    public string $componentDirectory;
 
-    /**
-     * @var array
-     */
-    private $target;
+    private array $target;
 
     /**
      * ComponentRenderer constructor.
-     * @param ComponentStore $componentStore
-     * @param \Twig_Environment $environment
-     * @param ConfigStore $configStore
      */
-    public function __construct(ComponentStore $componentStore, \Twig_Environment $environment, ConfigStore $configStore)
+    public function __construct(ComponentStore $componentStore, Environment $environment, ConfigStore $configStore)
     {
         $this->store = $componentStore;
         $this->environment = $environment;
@@ -59,15 +46,12 @@ class ComponentRenderer
      *
      * @param $name
      * @param array $props
-     * @return false|string
+     * @return string
      * @throws ComponentNotFoundException
      * @throws TemplateNotFoundException
      * @throws \Throwable
-     * @throws \Twig_Error_Loader
-     * @throws \Twig_Error_Runtime
-     * @throws \Twig_Error_Syntax
      */
-    public function renderComponent($name, $props = [])
+    public function renderComponent($name, array $props = []): string
     {
         if (!($name instanceof TwigComponentInterface)) {
             $component = $this->getComponent($name, $props);
@@ -103,6 +87,7 @@ class ComponentRenderer
 
         if ($content = $component->getContent() !== false) {
             $template = $this->environment->createTemplate($content);
+
             return $template->render($parameters);
         }
 
@@ -124,18 +109,15 @@ class ComponentRenderer
 
     /**
      * Returns a response holding the html of a component.
-     * 
+     *
      * @param $name
      * @param array $props
      * @return Response
      * @throws ComponentNotFoundException
      * @throws TemplateNotFoundException
      * @throws \Throwable
-     * @throws \Twig_Error_Loader
-     * @throws \Twig_Error_Runtime
-     * @throws \Twig_Error_Syntax
      */
-    public function render($name, $props = [])
+    public function render($name, array $props = []): Response
     {
         $component = $this->getComponent($name, $props);
 
@@ -158,12 +140,9 @@ class ComponentRenderer
     }
 
     /**
-     * @param $name
-     * @param array $props
-     * @return null|TwigComponentInterface
      * @throws ComponentNotFoundException
      */
-    public function getComponent($name, array &$props = [])
+    public function getComponent($name, array &$props = []): ?TwigComponentInterface
     {
         $component = $this->store->get($name);
 
@@ -255,27 +234,17 @@ class ComponentRenderer
         return $this->target['slots'][$name];
     }
 
-    /**
-     * @param $name
-     * @return bool
-     */
-    public function hasSlot($name)
+    public function hasSlot($name): bool
     {
         return isset($this->target['slots'][$name]);
     }
 
-    /**
-     * @return \Twig_Environment
-     */
-    public function getEnv()
+    public function getEnv(): Environment
     {
         return $this->environment;
     }
 
-    /**
-     * @return array
-     */
-    public function getContext()
+    public function getContext(): array
     {
         return $this->target['context'];
     }

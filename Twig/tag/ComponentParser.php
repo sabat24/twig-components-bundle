@@ -2,36 +2,32 @@
 
 namespace Olveneer\TwigComponentsBundle\Twig\tag;
 
+use Twig\Error\SyntaxError;
+use Twig\Token;
+use Twig\TokenParser\AbstractTokenParser;
+
 /**
  * Class SlotTokenParser
+ *
  * @package Olveneer\TwigComponentsBundle\Slot
  */
-class ComponentParser extends \Twig_TokenParser
+class ComponentParser extends AbstractTokenParser
 {
-    /**
-     * @var string
-     */
-    private $endTag = 'endget';
+    private string $endTag = 'endget';
 
-    /**
-     * @param \Twig_Token $token
-     * @return ComponentNode
-     * @throws \Twig_Error_Syntax
-     */
-    public function parse(\Twig_Token $token)
+    public function parse(Token $token): ComponentNode
     {
         $expr = $this->parser->getExpressionParser()->parseExpression();
 
-        list($variables, $slotted) = $this->parseArguments();
+        [$variables, $slotted] = $this->parseArguments();
 
         return new ComponentNode($expr, $variables, $token->getLine(), $slotted, $this->getTag());
     }
 
     /**
-     * @return array
-     * @throws \Twig_Error_Syntax
+     * @throws SyntaxError
      */
-    protected function parseArguments()
+    protected function parseArguments(): array
     {
         $stream = $this->parser->getStream();
 
@@ -43,7 +39,7 @@ class ComponentParser extends \Twig_TokenParser
 
         $stream->expect(/* Twig_Token::BLOCK_END_TYPE */ 3);
 
-        $body = $this->parser->subparse(array($this, 'decideComponentFork'));
+        $body = $this->parser->subparse([$this, 'decideComponentFork']);
 
         $slotted = [];
         $end = false;
@@ -51,25 +47,26 @@ class ComponentParser extends \Twig_TokenParser
             switch ($stream->next()->getValue()) {
                 case 'slot':
                     $name = $stream->getCurrent()->getValue();
-                    $stream->expect(\Twig_Token::NAME_TYPE);
+                    $stream->expect(Token::NAME_TYPE);
 
                     $stream->expect(/* Twig_Token::BLOCK_END_TYPE */ 3);
-                    $slotNodes = $this->parser->subparse(array($this, 'decideComponentFork'));
+                    $slotNodes = $this->parser->subparse([$this, 'decideComponentFork']);
 
                     $slotted[$name] = $slotNodes;
-                    break;
+                break;
 
                 case 'endslot':
                     $stream->expect(/* Twig_Token::BLOCK_END_TYPE */ 3);
-                    $body = $this->parser->subparse(array($this, 'decideComponentFork'));
-                    break;
+                    $body = $this->parser->subparse([$this, 'decideComponentFork']);
+                break;
 
                 case $this->endTag:
                     $end = true;
-                    break;
+                break;
 
                 default:
-                    throw new \Twig_Error_Syntax(sprintf('Unexpected end of template. Twig was looking for the following tag "else", "elseif", or "endif" to close the "if" block started at line %d).', $lineno), $stream->getCurrent()->getLine(), $stream->getSourceContext());
+                    throw new SyntaxError(sprintf('Unexpected end of template. Twig was looking for the following tag "else", "elseif", or "endif" to close the "if" block started at line %d).', $stream->getCurrent()
+                        ->getLine()), $stream->getCurrent()->getLine(), $stream->getSourceContext());
             }
         }
 
@@ -78,10 +75,7 @@ class ComponentParser extends \Twig_TokenParser
         return [$variables, $slotted];
     }
 
-    /**
-     * @return string
-     */
-    public function getTag()
+    public function getTag(): string
     {
         return 'get';
     }
@@ -90,10 +84,8 @@ class ComponentParser extends \Twig_TokenParser
      * Callback called at each tag name when subparsing, must return
      * true when the expected end tag is reached.
      *
-     * @param \Twig_Token $token
-     * @return bool
      */
-    public function decideComponentEnd(\Twig_Token $token)
+    public function decideComponentEnd(Token $token): bool
     {
         return $token->test([$this->endTag]);
     }
@@ -102,10 +94,8 @@ class ComponentParser extends \Twig_TokenParser
      * Callback called at each tag name when subparsing, must return
      * true when the expected end tag is reached.
      *
-     * @param \Twig_Token $token
-     * @return bool
      */
-    public function decideComponentFork(\Twig_Token $token)
+    public function decideComponentFork(Token $token): bool
     {
         return $token->test(['slot', 'endslot', $this->endTag]);
     }

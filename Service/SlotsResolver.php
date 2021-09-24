@@ -7,19 +7,17 @@ use Olveneer\TwigComponentsBundle\Exception\MissingSlotException;
 
 /**
  * Class SlotsResolver
+ *
  * @package Olveneer\TwigComponentsBundle\Service
  */
 class SlotsResolver
 {
-    /**
-     * @var array
-     */
-    public $slots;
+    public array $slots;
 
     /**
      * @var string[]
      */
-    private $requiredSlots = [];
+    private array $requiredSlots = [];
 
     /**
      * @param $slots
@@ -131,19 +129,12 @@ class SlotsResolver
         }
     }
 
-    /**
-     * @param array $slots
-     */
-    public function setRequired($slots = [])
+    public function setRequired(array $slots = [])
     {
         $this->requiredSlots = $slots;
     }
 
-    /**
-     * @param $slot
-     * @return SlotValidatorNode
-     */
-    public function checkSlot($slot)
+    public function checkSlot($slot): SlotValidatorNode
     {
         return new SlotValidatorNode($slot, $this);
     }

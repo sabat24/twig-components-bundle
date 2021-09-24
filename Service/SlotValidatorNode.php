@@ -4,24 +4,18 @@ namespace Olveneer\TwigComponentsBundle\Service;
 
 /**
  * Class SlotValidatorNode
+ *
  * @package Olveneer\TwigComponentsBundle\Service
  */
 class SlotValidatorNode
 {
-    /**
-     * @var SlotsResolver
-     */
-    private $resolver;
 
-    /**
-     * @var
-     */
-    private $slot;
+    private SlotsResolver $resolver;
+
+    private string $slot;
 
     /**
      * SlotValidator constructor.
-     * @param $slot
-     * @param $resolver
      */
     public function __construct($slot, $resolver)
     {
@@ -29,16 +23,13 @@ class SlotValidatorNode
         $this->resolver = $resolver;
     }
 
-    /**
-     * @param $tag
-     * @param int $amount
-     * @param array $attributes
-     * @return SlotsResolver
-     */
-    public function requiresElement($tag, $amount = 1, $attributes = [])
+    public function requiresElement($tag, int $amount = 1, array $attributes = []): SlotsResolver
     {
-       $this->resolver->slots[$this->slot]['requiredElements'][$tag] = ['attributes' => $attributes, 'amount' => $amount];
+        $this->resolver->slots[$this->slot]['requiredElements'][$tag] = [
+            'attributes' => $attributes,
+            'amount' => $amount,
+        ];
 
-       return $this->resolver;
+        return $this->resolver;
     }
 }

@@ -3,29 +3,32 @@
 namespace Olveneer\TwigComponentsBundle\Twig\tag;
 
 use Olveneer\TwigComponentsBundle\Exception\SlotSyntaxException;
+use Twig\Compiler;
+use Twig\Node\Expression\ArrayExpression;
+use Twig\Node\Expression\NameExpression;
+use Twig\Node\Node;
+use Twig\Node\NodeOutputInterface;
 
 /**
  * Class SlotNode
+ *
  * @package Olveneer\TwigComponentsBundle\Twig\tag\component
  */
-class SlotNode extends \Twig_Node implements \Twig_NodeOutputInterface
+class SlotNode extends Node implements NodeOutputInterface
 {
     /**
      * SlotNode constructor.
-     * @param $params
-     * @param int $lineno
-     * @param null $tag
      */
-    public function __construct($params, $lineno = 0, $tag = null)
+    public function __construct($params, int $lineno = 0, ?string $tag = null)
     {
         parent::__construct(['params' => $params], [], $lineno, $tag);
     }
 
     /**
-     * @param \Twig_Compiler $compiler
+     * @param Compiler $compiler
      * @throws SlotSyntaxException
      */
-    public function compile(\Twig_Compiler $compiler)
+    public function compile(Compiler $compiler)
     {
 
         $params = $this->getNode('params');
@@ -41,11 +44,10 @@ class SlotNode extends \Twig_Node implements \Twig_NodeOutputInterface
             ->write('$renderer = $extension->getRenderer(); ')->raw(PHP_EOL)
             ->write('$compiler = $extension->createCompiler(); ')->raw(PHP_EOL);
 
-
-        /** @var \Twig_Node[] $nodes */
+        /** @var Node[] $nodes */
         $nodes = $params->nodes;
 
-        if (!$nodes[1] instanceof \Twig_Node_Expression_Name) {
+        if (!$nodes[1] instanceof NameExpression) {
             throw new SlotSyntaxException("Use unquoted strings for the {% slot %} tag.");
         }
 
@@ -56,7 +58,7 @@ class SlotNode extends \Twig_Node implements \Twig_NodeOutputInterface
         if (isset($nodes[2])) {
             $exposes = $nodes[2]->getAttribute('name');
             if ($exposes === 'expose') {
-                if (isset($nodes[3]) && $nodes[3] instanceof  \Twig_Node_Expression_Array) {
+                if (isset($nodes[3]) && $nodes[3] instanceof ArrayExpression) {
                     $compiler
                         ->write('$exposed = ')
                         ->subcompile($nodes[3])->raw(';')->raw(PHP_EOL);
@@ -89,7 +91,7 @@ class SlotNode extends \Twig_Node implements \Twig_NodeOutputInterface
             ->outdent()
             ->write('} else {')->raw(PHP_EOL)
             ->indent()
-                ->subCompile($nodes[0])
+            ->subCompile($nodes[0])
             ->outdent()
             ->raw('}')->raw(PHP_EOL)
             ->write('$context = $oldContext;')->raw(PHP_EOL);

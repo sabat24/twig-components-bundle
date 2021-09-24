@@ -9,6 +9,7 @@ use Symfony\Component\DependencyInjection\Reference;
 
 /**
  * Class ComponentPass
+ *
  * @package App\Olveneer\TwigComponentsBundle\Service
  */
 class ComponentPass implements CompilerPassInterface
